@@ -51,6 +51,7 @@ interface LeadData {
   // Book Demo fields
   phoneNumber?: string;
   category?: string;
+  revenueRange?: string;
   // Contact Us fields
   workEmail?: string;
   email?: string;
@@ -90,7 +91,7 @@ function LeadCard({
       onClick={onClick}
       className={cn(
         "bg-[hsl(var(--card))] border border-[hsl(var(--card-border))] rounded-lg p-3 cursor-grab active:cursor-grabbing transition-all shadow-sm hover:shadow-md relative group",
-        isDragging && "opacity-50 rotate-2 scale-95"
+        isDragging && "opacity-50 rotate-2 scale-95",
       )}
     >
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -133,13 +134,13 @@ function LeadCard({
           </div>
         )}
 
-        {lead.budget && (
+        {(lead.budget || lead.revenueRange) && (
           <div className="flex items-center gap-1.5 text-xs text-[hsl(var(--foreground))] font-medium pt-1">
             <DollarSign
               size={12}
               className="text-[hsl(var(--muted-foreground))]"
             />
-            {lead.budget}
+            {lead.budget || lead.revenueRange}
           </div>
         )}
 
@@ -202,7 +203,7 @@ function PipelineColumn({
     <div
       className={cn(
         "flex flex-col min-w-[280px] w-[280px] h-full transition-colors",
-        isDragOver && "bg-[hsl(var(--accent))]/20"
+        isDragOver && "bg-[hsl(var(--accent))]/20",
       )}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -238,7 +239,7 @@ function PipelineColumn({
             className={cn(
               "flex items-center justify-center h-24 text-sm text-[hsl(var(--muted-foreground))] border border-dashed border-[hsl(var(--border))] rounded-md transition-colors",
               isDragOver &&
-                "border-[hsl(var(--primary))] bg-[hsl(var(--accent))]/10"
+                "border-[hsl(var(--primary))] bg-[hsl(var(--accent))]/10",
             )}
           >
             {isDragOver ? "Drop here" : "No leads"}
@@ -364,7 +365,7 @@ function LeadDetail({
                         "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                         lead.status === option.value
                           ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
-                          : "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--accent))]"
+                          : "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--accent))]",
                       )}
                     >
                       {option.label}
@@ -376,12 +377,17 @@ function LeadDetail({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wide mb-1 block">
-                    Budget / Category
+                    Budget / Revenue / Category
                   </label>
                   <div className="flex flex-col gap-2">
                     {lead.budget && (
                       <p className="text-sm text-[hsl(var(--foreground))] font-medium">
                         Budget: {lead.budget}
+                      </p>
+                    )}
+                    {lead.revenueRange && (
+                      <p className="text-sm text-[hsl(var(--foreground))] font-medium">
+                        Revenue: {lead.revenueRange}
                       </p>
                     )}
                     {lead.category && (
@@ -392,7 +398,7 @@ function LeadDetail({
                         </span>
                       </p>
                     )}
-                    {!lead.budget && !lead.category && (
+                    {!lead.budget && !lead.revenueRange && !lead.category && (
                       <p className="text-sm text-[hsl(var(--muted-foreground))]">
                         N/A
                       </p>
@@ -408,7 +414,7 @@ function LeadDetail({
                       "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
                       lead.formType === "book-demo"
                         ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
-                        : "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                        : "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
                     )}
                   >
                     {lead.formType === "book-demo" ? "Book Demo" : "Contact"}
@@ -505,8 +511,8 @@ export const Pipeline: React.FC = () => {
         typeof leadDate === "string"
           ? new Date(leadDate).getTime()
           : (leadDate as any).seconds
-          ? (leadDate as any).seconds * 1000
-          : 0;
+            ? (leadDate as any).seconds * 1000
+            : 0;
 
       if (time < start || time > end) return false;
     }
@@ -538,7 +544,7 @@ export const Pipeline: React.FC = () => {
             try {
               const q = query(
                 collection(db, collectionName),
-                orderBy("createdAt", "desc")
+                orderBy("createdAt", "desc"),
               );
               querySnapshot = await getDocs(q);
             } catch {
@@ -583,8 +589,8 @@ export const Pipeline: React.FC = () => {
       // Update local state immediately
       setLeads((prevLeads) =>
         prevLeads.map((lead) =>
-          lead.id === leadId ? { ...lead, status: newStatus } : lead
-        )
+          lead.id === leadId ? { ...lead, status: newStatus } : lead,
+        ),
       );
 
       // Try to update in Firestore (find the collection)
@@ -607,7 +613,7 @@ export const Pipeline: React.FC = () => {
           await updateDoc(leadRef, { status: newStatus });
           updated = true;
           console.log(
-            `Updated status for ${leadId} in ${collectionName} to ${newStatus}`
+            `Updated status for ${leadId} in ${collectionName} to ${newStatus}`,
           );
           break;
         } catch (err) {
@@ -617,7 +623,7 @@ export const Pipeline: React.FC = () => {
 
       if (!updated) {
         console.warn(
-          "Could not find document to update status in any known collection"
+          "Could not find document to update status in any known collection",
         );
       }
     } catch (err) {
@@ -659,7 +665,7 @@ export const Pipeline: React.FC = () => {
 
       if (!deleted) {
         console.warn(
-          "Could not find document to delete in any known collection"
+          "Could not find document to delete in any known collection",
         );
       }
     } catch (err) {
@@ -737,7 +743,7 @@ export const Pipeline: React.FC = () => {
       const walk = (x - dragStart.current.x) * 1.5;
       scrollContainerRef.current.scrollLeft = dragStart.current.left - walk;
     },
-    [isDragging]
+    [isDragging],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -856,7 +862,7 @@ export const Pipeline: React.FC = () => {
         ref={scrollContainerRef}
         className={cn(
           "flex gap-4 flex-1 overflow-x-auto p-6 pb-0 select-none",
-          isDragging ? "cursor-grabbing" : "cursor-grab"
+          isDragging ? "cursor-grabbing" : "cursor-grab",
         )}
         onMouseDown={handleMouseDown}
         onContextMenu={(e) => {
