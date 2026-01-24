@@ -40,6 +40,22 @@ const toDate = (value: any) => {
 const formatDateShort = (value: any) => toDate(value).toLocaleDateString();
 const formatDateLong = (value: any) => toDate(value).toLocaleString();
 
+// Helper function for status badge styling
+const getStatusBadgeClass = (status: LeadStatus) => {
+  switch (status) {
+    case "leads":
+      return "bg-slate-100 text-slate-700 border-slate-300";
+    case "contacted":
+      return "bg-blue-100 text-blue-700 border-blue-300";
+    case "won":
+      return "bg-green-100 text-green-700 border-green-300";
+    case "lost":
+      return "bg-red-100 text-red-700 border-red-300";
+    default:
+      return "bg-slate-100 text-slate-700 border-slate-300";
+  }
+};
+
 interface LeadData {
   id: string;
   name: string;
@@ -362,10 +378,10 @@ function LeadDetail({
                         onClose();
                       }}
                       className={cn(
-                        "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                        "px-3 py-1.5 rounded-md text-sm font-medium transition-colors border",
                         lead.status === option.value
-                          ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
-                          : "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--accent))]",
+                          ? getStatusBadgeClass(option.value)
+                          : "bg-white text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))]",
                       )}
                     >
                       {option.label}
@@ -393,7 +409,7 @@ function LeadDetail({
                     {lead.category && (
                       <p className="text-sm text-[hsl(var(--foreground))]">
                         Category:{" "}
-                        <span className="bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded text-xs font-medium">
+                        <span className="text-xs font-medium bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded-full">
                           {lead.category}
                         </span>
                       </p>
@@ -413,8 +429,8 @@ function LeadDetail({
                     className={cn(
                       "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
                       lead.formType === "book-demo"
-                        ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
-                        : "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+                        ? "bg-white text-orange-600 border-orange-400"
+                        : "bg-white text-orange-700 border-orange-500",
                     )}
                   >
                     {lead.formType === "book-demo" ? "Book Demo" : "Contact"}

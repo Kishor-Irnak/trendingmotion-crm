@@ -39,6 +39,22 @@ const toDate = (value: any) => {
 
 const formatDateLong = (value: any) => toDate(value).toLocaleString();
 
+// Helper function for status badge styling
+const getStatusBadgeClass = (status: LeadStatus) => {
+  switch (status) {
+    case "leads":
+      return "bg-slate-100 text-slate-700 border-slate-300";
+    case "contacted":
+      return "bg-blue-100 text-blue-700 border-blue-300";
+    case "won":
+      return "bg-green-100 text-green-700 border-green-300";
+    case "lost":
+      return "bg-red-100 text-red-700 border-red-300";
+    default:
+      return "bg-slate-100 text-slate-700 border-slate-300";
+  }
+};
+
 interface LeadData {
   id: string;
   name: string;
@@ -172,10 +188,10 @@ function LeadDetail({
                         onClose();
                       }}
                       className={cn(
-                        "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                        "px-3 py-1.5 rounded-md text-sm font-medium transition-colors border",
                         lead.status === option.value
-                          ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
-                          : "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--accent))]",
+                          ? getStatusBadgeClass(option.value)
+                          : "bg-white text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))]",
                       )}
                     >
                       {option.label}
@@ -203,7 +219,7 @@ function LeadDetail({
                     {lead.category && (
                       <p className="text-sm text-[hsl(var(--foreground))]">
                         Category:{" "}
-                        <span className="bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded text-xs font-medium">
+                        <span className="text-xs font-medium bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded-full">
                           {lead.category}
                         </span>
                       </p>
@@ -223,8 +239,8 @@ function LeadDetail({
                     className={cn(
                       "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
                       lead.formType === "book-demo"
-                        ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
-                        : "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+                        ? "bg-white text-orange-600 border-orange-400"
+                        : "bg-white text-orange-700 border-orange-500",
                     )}
                   >
                     {lead.formType === "book-demo" ? "Book Demo" : "Contact"}
@@ -700,8 +716,8 @@ export const Dashboard: React.FC = () => {
                   {stats.contacted}
                 </h3>
               </div>
-              <div className="p-3 bg-blue-500/10 rounded-full">
-                <Mail className="w-6 h-6 text-blue-500" />
+              <div className="p-3 bg-orange-500/10 rounded-full">
+                <Mail className="w-6 h-6 text-orange-500" />
               </div>
             </div>
           </div>
@@ -715,8 +731,8 @@ export const Dashboard: React.FC = () => {
                   {stats.won}
                 </h3>
               </div>
-              <div className="p-3 bg-green-500/10 rounded-full">
-                <CheckCircle className="w-6 h-6 text-green-500" />
+              <div className="p-3 bg-orange-600/10 rounded-full">
+                <CheckCircle className="w-6 h-6 text-orange-600" />
               </div>
             </div>
           </div>
@@ -740,21 +756,24 @@ export const Dashboard: React.FC = () => {
         <div className="hidden lg:block rounded-xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-[hsl(var(--muted))] border-b border-[hsl(var(--border))] text-xs uppercase font-semibold text-[hsl(var(--muted-foreground))]">
+              <thead className="bg-gray-50 border-b border-[hsl(var(--border))]">
                 <tr>
-                  <th className="px-6 py-4 font-semibold text-[hsl(var(--foreground))]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Name & Contact
                   </th>
-                  <th className="px-6 py-4 font-semibold text-[hsl(var(--foreground))]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-4 font-semibold text-[hsl(var(--foreground))]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Details
                   </th>
-                  <th className="px-6 py-4 font-semibold text-[hsl(var(--foreground))]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Budget / Revenue
                   </th>
-                  <th className="px-6 py-4 font-semibold text-[hsl(var(--foreground))]">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Submitted
                   </th>
                 </tr>
@@ -813,8 +832,8 @@ export const Dashboard: React.FC = () => {
                           className={cn(
                             "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
                             lead.formType === "book-demo"
-                              ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
-                              : "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+                              ? "bg-white text-orange-600 border-orange-400"
+                              : "bg-white text-orange-700 border-orange-500",
                           )}
                         >
                           {lead.formType === "book-demo"
@@ -828,7 +847,7 @@ export const Dashboard: React.FC = () => {
                             <span className="text-[10px] uppercase font-bold text-[hsl(var(--muted-foreground))]">
                               Category:
                             </span>
-                            <span className="text-xs font-medium text-[hsl(var(--foreground))] bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded-full">
+                            <span className="text-xs font-medium bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded-full">
                               {lead.category}
                             </span>
                           </div>
@@ -866,6 +885,20 @@ export const Dashboard: React.FC = () => {
                           )}
                           {lead.budget || lead.revenueRange || "N/A"}
                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={cn(
+                            "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
+                            getStatusBadgeClass(lead.status || "leads"),
+                          )}
+                        >
+                          {lead.status === "leads" && "Leads"}
+                          {lead.status === "contacted" && "Contacted"}
+                          {lead.status === "won" && "Won"}
+                          {lead.status === "lost" && "Lost"}
+                          {!lead.status && "Leads"}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-[hsl(var(--muted-foreground))] whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
@@ -918,8 +951,8 @@ export const Dashboard: React.FC = () => {
                     className={cn(
                       "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border shrink-0",
                       lead.formType === "book-demo"
-                        ? "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
-                        : "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+                        ? "bg-white text-orange-600 border-orange-400"
+                        : "bg-white text-orange-700 border-orange-500",
                     )}
                   >
                     {lead.formType === "book-demo" ? "Book Demo" : "Contact"}
@@ -947,7 +980,7 @@ export const Dashboard: React.FC = () => {
                         <span className="text-[10px] uppercase font-bold text-[hsl(var(--muted-foreground))]">
                           Category:
                         </span>
-                        <span className="text-xs font-medium text-[hsl(var(--foreground))] bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-medium bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] px-2 py-0.5 rounded-full">
                           {lead.category}
                         </span>
                       </div>
