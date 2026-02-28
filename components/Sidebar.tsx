@@ -1,14 +1,17 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../src/lib/firebase";
 import {
   LayoutDashboard,
   Kanban,
-  Users,
+  FileText,
   Settings,
   HelpCircle,
   LogOut,
   ChevronRight,
   X,
+  Globe,
 } from "lucide-react";
 import { cn } from "./ui-primitives";
 
@@ -21,7 +24,8 @@ interface SidebarProps {
 const NAV_ITEMS = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/pipeline", icon: Kanban, label: "Pipeline" },
-  { to: "/companion", icon: Users, label: "Companion Leads" },
+  { to: "/blog", icon: FileText, label: "Blog" },
+  { to: "/seo", icon: Globe, label: "SEO Settings" },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
@@ -53,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <p className="text-sm font-bold text-gray-900 leading-none">
-                Evoc Labs
+                Trending Motion
               </p>
               <p className="text-[11px] text-gray-400 mt-0.5">CRM Dashboard</p>
             </div>
@@ -124,11 +128,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <Settings size={17} className="text-gray-400 shrink-0" />
             Settings
           </NavLink>
+          <button
+            onClick={() => {
+              signOut(auth);
+              closeMobile();
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors group"
+          >
+            <LogOut
+              size={17}
+              className="text-gray-400 shrink-0 group-hover:text-red-500 transition-colors"
+            />
+            Logout
+          </button>
         </div>
 
         {/* User Info */}
         <div className="px-3 py-3 border-t border-gray-100">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group">
+          <div
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer group"
+            onClick={() => signOut(auth)}
+          >
             <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-xs font-bold shrink-0">
               EA
             </div>
@@ -137,12 +157,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 Evoc Admin
               </p>
               <p className="text-xs text-gray-400 truncate">
-                evoclabs@gmail.com
+                admin@trendingmotion.com
               </p>
             </div>
             <LogOut
               size={15}
-              className="text-gray-300 group-hover:text-gray-500 transition-colors shrink-0"
+              className="text-gray-300 group-hover:text-red-500 transition-colors shrink-0"
             />
           </div>
         </div>

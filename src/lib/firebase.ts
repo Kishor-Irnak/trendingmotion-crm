@@ -1,15 +1,17 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBJc0xO9KSjCef0pw7-YrJ0w4pzk-PAsCA",
-  authDomain: "evoclabs-41905.firebaseapp.com",
-  projectId: "evoclabs-41905",
-  storageBucket: "evoclabs-41905.firebasestorage.app",
-  messagingSenderId: "230797425266",
-  appId: "1:230797425266:web:7230b02573b4177e64e0eb",
-  measurementId: "G-25T2MC064F",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -26,3 +28,4 @@ if (typeof window !== "undefined") {
 }
 
 export const db = getFirestore(app);
+export const auth = getAuth(app);

@@ -1,14 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "./src/lib/firebase";
 import { Sidebar } from "./components/Sidebar";
 import { Dashboard } from "./pages/Dashboard";
 import { Pipeline } from "./pages/Pipeline";
-import { Companion } from "./pages/Companion";
+import { Blog } from "./pages/Blog";
+import { BlogPost } from "./pages/BlogPost";
+import { SEO } from "./pages/SEO";
+import { Login } from "./pages/Login";
 import { ThemeProvider } from "./components/ThemeProvider";
-import { Menu } from "lucide-react";
+import { Menu, Loader2 } from "lucide-react";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (authLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[hsl(var(--background))]">
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(var(--primary))]" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <ThemeProvider>
+        <Login />
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider>
@@ -31,14 +62,16 @@ function App() {
             <div className="w-7 h-7 rounded-md bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
               EL
             </div>
-            <span className="font-bold text-gray-900">Evoc Labs CRM</span>
+            <span className="font-bold text-gray-900">Trending Motion CRM</span>
           </div>
 
           <main className="flex-1 w-full lg:ml-60 min-h-screen pt-14 lg:pt-0 transition-all duration-300">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/pipeline" element={<Pipeline />} />
-              <Route path="/companion" element={<Companion />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/seo" element={<SEO />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
