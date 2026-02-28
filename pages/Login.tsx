@@ -43,8 +43,12 @@ export const Login: React.FC = () => {
 
       <div className="w-full max-w-md bg-[hsl(var(--card))] border border-[hsl(var(--card-border))] rounded-3xl shadow-xl relative z-10 overflow-hidden flex flex-col">
         <div className="p-8 sm:p-10 flex flex-col items-center border-b border-[hsl(var(--border))]">
-          <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--primary))]/10 flex items-center justify-center text-[hsl(var(--primary))] mb-6 border border-[hsl(var(--primary))]/20 shadow-inner">
-            <Lock size={28} className="drop-shadow-sm" />
+          <div className="w-16 h-16 flex items-center justify-center mb-6">
+            <img
+              src="https://i.postimg.cc/GhWnSTSq/favicon.png"
+              alt="Trending Motion"
+              className="w-full h-full object-contain drop-shadow-sm"
+            />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[hsl(var(--foreground))] tracking-tight text-center">
             Welcome Back

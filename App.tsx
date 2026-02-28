@@ -59,8 +59,12 @@ function App() {
             >
               <Menu size={20} />
             </button>
-            <div className="w-7 h-7 rounded-md bg-gray-900 flex items-center justify-center text-white text-xs font-bold">
-              EL
+            <div className="w-7 h-7 flex items-center justify-center">
+              <img
+                src="https://i.postimg.cc/GhWnSTSq/favicon.png"
+                alt="Trending Motion Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="font-bold text-gray-900">Trending Motion CRM</span>
           </div>
